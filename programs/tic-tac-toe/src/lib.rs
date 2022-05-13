@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use num_derive::*;
 use num_traits::*;
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("7BhKvK8wA4mTewGRdZmUbtjWCQ3yNbBdGCEiFSHrSfYD");
 
 #[program]
 pub mod tic_tac_toe {
