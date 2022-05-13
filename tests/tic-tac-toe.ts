@@ -78,4 +78,43 @@ describe('tic-tac-toe', () => {
       [null, null, null],
     ])
   })
+
+  it('not players turn!', async () => {
+    const gameKeypair = anchor.web3.Keypair.generate()
+    const playerOne = (program.provider as anchor.AnchorProvider).wallet
+    const playerTwo = anchor.web3.Keypair.generate()
+    await program.methods
+      .setupGame(playerTwo.publicKey)
+      .accounts({
+        game: gameKeypair.publicKey,
+        playerOne: playerOne.publicKey,
+      })
+      .signers([gameKeypair])
+      .rpc()
+
+    let gameState = await program.account.game.fetch(gameKeypair.publicKey)
+    expect(gameState.turn).to.equal(1)
+    expect(gameState.players).to.eql([playerOne.publicKey, playerTwo.publicKey])
+    expect(gameState.state).to.eql({ active: {} })
+    expect(gameState.board).to.eql([
+      [null, null, null],
+      [null, null, null],
+      [null, null, null],
+    ])
+
+    try {
+      await play(program, gameKeypair.publicKey, playerTwo, { row: 0, column: 0 }, 2, { active: {} }, [
+        [{ x: {} }, null, null],
+        [null, null, null],
+        [null, null, null],
+      ])
+
+      // we use this to make sure we definitely throw an error
+      chai.assert(false, "should've failed but didn't ")
+    } catch (error) {
+      expect(error).to.be.instanceOf(anchor.AnchorError)
+      const err: anchor.AnchorError = error
+      expect(err.error.errorCode.number).to.equal(6003)
+    }
+  })
 })
