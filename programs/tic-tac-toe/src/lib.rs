@@ -2,8 +2,6 @@ use anchor_lang::prelude::*;
 use num_derive::*;
 use num_traits::*;
 
-use crate::program::TicTacToe;
-
 declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
 #[program]
@@ -98,7 +96,7 @@ impl Game {
     fn update_state(&mut self) {
         for i in 0..=2 {
             // in the same row
-            if (self.is_winning_trio([(i, 0), (i, 1), (i, 2)])) {
+            if self.is_winning_trio([(i, 0), (i, 1), (i, 2)]) {
                 self.state = GameState::Won {
                     winner: self.current_player(),
                 };
@@ -106,7 +104,7 @@ impl Game {
             }
 
             // in the same column
-            if (self.is_winning_trio([(0, i), (1, i), (2, i)])) {
+            if self.is_winning_trio([(0, i), (1, i), (2, i)]) {
                 self.state = GameState::Won {
                     winner: self.current_player(),
                 };
@@ -115,8 +113,8 @@ impl Game {
         }
 
         // in the same diagonal
-        if (self.is_winning_trio([(0, 0), (1, 1), (2, 2)])
-            || self.is_winning_trio([(0, 2), (1, 1), (2, 0)]))
+        if self.is_winning_trio([(0, 0), (1, 1), (2, 2)])
+            || self.is_winning_trio([(0, 2), (1, 1), (2, 0)])
         {
             self.state = GameState::Won {
                 winner: self.current_player(),
