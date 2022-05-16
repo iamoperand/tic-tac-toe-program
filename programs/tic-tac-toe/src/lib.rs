@@ -2,6 +2,14 @@ use anchor_lang::prelude::*;
 use num_derive::*;
 use num_traits::*;
 
+mod errors;
+mod instructions;
+mod state;
+
+pub use errors::*;
+pub use instructions::*;
+pub use state::*;
+
 declare_id!("7BhKvK8wA4mTewGRdZmUbtjWCQ3yNbBdGCEiFSHrSfYD");
 
 #[program]
@@ -25,29 +33,6 @@ pub mod tic_tac_toe {
 
         game.play(&tile)
     }
-}
-
-#[account]
-pub struct Game {
-    players: [Pubkey; 2],          // 32
-    turn: u8,                      // 1
-    board: [[Option<Sign>; 3]; 3], // 9 * (1 + 1)
-    state: GameState,              // 32 + 1
-}
-
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]
-pub enum GameState {
-    Active,
-    Tie,
-    Won { winner: Pubkey },
-}
-
-#[derive(
-    AnchorSerialize, AnchorDeserialize, Copy, Clone, PartialEq, Eq, FromPrimitive, ToPrimitive,
-)]
-pub enum Sign {
-    X,
-    O,
 }
 
 impl Game {
@@ -155,29 +140,4 @@ impl Game {
 pub struct Tile {
     row: u8,
     column: u8,
-}
-
-#[error_code]
-pub enum TicTacToeError {
-    TileOutOfBounds,
-    TileAlreadySet,
-    GameAlreadyOver,
-    NotPlayersTurn,
-    GameAlreadyStarted,
-}
-
-#[derive(Accounts)]
-pub struct SetupGame<'info> {
-    #[account(init, payer = player_one, space = 8 + Game::MAXIMUM_SIZE)]
-    pub game: Account<'info, Game>,
-    #[account(mut)]
-    pub player_one: Signer<'info>,
-    pub system_program: Program<'info, System>,
-}
-
-#[derive(Accounts)]
-pub struct Play<'info> {
-    #[account(mut)]
-    pub game: Account<'info, Game>,
-    pub player: Signer<'info>,
 }

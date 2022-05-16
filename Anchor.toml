@@ -7,7 +7,7 @@ tic_tac_toe = "7BhKvK8wA4mTewGRdZmUbtjWCQ3yNbBdGCEiFSHrSfYD"
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "devnet"
+cluster = "localnet"
 wallet = "/Users/nikhil/.config/solana/id.json"
 
 [scripts]
